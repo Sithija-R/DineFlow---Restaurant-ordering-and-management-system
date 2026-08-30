@@ -8,7 +8,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dineflow
     username: postgres
-    password: 0768847208
+    password: ********
 
   jpa:
     hibernate:
