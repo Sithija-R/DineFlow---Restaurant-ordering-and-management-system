@@ -1,3 +1,19 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: menu
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dineflow_menu
+    username: postgres
+    password: ********
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secret: $hiuregbiurefifewlfewlfewvlewve4fewfgejwhjifhejfewjfew54332gfejn1lr2353k%y899svjevjk
