@@ -31,6 +31,7 @@ public class MenuItem {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AvailabilityStatus status;
+    
     @Column(nullable = false)
     private Integer availableCount;
 

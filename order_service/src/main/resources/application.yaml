@@ -1,3 +1,22 @@
+server:
+  port: 8082
+
 spring:
   application:
-    name: order
+    name: order-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dineflow_order
+    username: postgres
+    password: ********
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secret: $hiuregbiurefifewlfewlfewvlewve4fewfgejwhjifhejfewjfew54332gfejn1lr2353k%y899svjevjk
+
+menu-service:
+  url: http://localhost:8081
