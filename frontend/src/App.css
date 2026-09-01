@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Additional utility styles for DineFlow */
+.hero-gradient {
+  background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.15), transparent 50%),
+              radial-gradient(circle at bottom left, rgba(234, 88, 12, 0.1), transparent 50%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #fdba74 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.badge-glow {
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+}
+
