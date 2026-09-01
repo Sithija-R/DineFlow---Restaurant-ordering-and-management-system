@@ -8,7 +8,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dineflow
     username: postgres
-    password: ********
+    password: ******
 
   jpa:
     hibernate:
@@ -16,5 +16,5 @@ spring:
     show-sql: true
 
 jwt:
-  secret: ${JWT_SECRET:change-this-to-a-long-secret-key-at-least-32-characters}
+  secret: $hiuregbiurefifewlfewlfewvlewve4fewfgejwhjifhejfewjfew54332gfejn1lr2353k%y899svjevjk
   expiration: 86400000
