@@ -7,11 +7,7 @@ import {
   updateOrderStatus as updateOrderStatusApi,
 } from "../service/orderService";
 
-import type {
-  OrderRequest,
-  OrderResponse,
-  OrderStatus,
-} from "../types/order";
+import type { OrderRequest, OrderResponse, OrderStatus } from "../types/order";
 
 interface OrderState {
   orders: OrderResponse[];
@@ -20,23 +16,10 @@ interface OrderState {
   loading: boolean;
   error: string | null;
 
-  createOrder: (
-    request: OrderRequest
-  ) => Promise<OrderResponse>;
-
-  getOrderByReference: (
-    reference: string
-  ) => Promise<OrderResponse>;
-
-  fetchOrders: (
-    status?: OrderStatus
-  ) => Promise<void>;
-
-  updateOrderStatus: (
-    id: number,
-    status: OrderStatus
-  ) => Promise<void>;
-
+  createOrder: (request: OrderRequest) => Promise<OrderResponse>;
+  getOrderByReference: (reference: string) => Promise<OrderResponse>;
+  fetchOrders: (status?: OrderStatus) => Promise<void>;
+  updateOrderStatus: (id: number, status: OrderStatus) => Promise<void>;
   clearCurrentOrder: () => void;
   clearError: () => void;
 }
@@ -44,7 +27,6 @@ interface OrderState {
 export const useOrderStore = create<OrderState>((set) => ({
   orders: [],
   currentOrder: null,
-
   loading: false,
   error: null,
 
@@ -64,9 +46,7 @@ export const useOrderStore = create<OrderState>((set) => ({
 
       return order;
     } catch (error: any) {
-      const message =
-        error.response?.data?.message ||
-        "Failed to place order.";
+      const message = error.response?.data?.message || "Failed to place order.";
 
       set({
         loading: false,
@@ -84,8 +64,7 @@ export const useOrderStore = create<OrderState>((set) => ({
     });
 
     try {
-      const order =
-        await getOrderByReferenceApi(reference);
+      const order = await getOrderByReferenceApi(reference);
 
       set({
         currentOrder: order,
@@ -94,9 +73,7 @@ export const useOrderStore = create<OrderState>((set) => ({
 
       return order;
     } catch (error: any) {
-      const message =
-        error.response?.data?.message ||
-        "Order not found.";
+      const message = error.response?.data?.message || "Order not found.";
 
       set({
         loading: false,
@@ -122,9 +99,7 @@ export const useOrderStore = create<OrderState>((set) => ({
         loading: false,
       });
     } catch (error: any) {
-      const message =
-        error.response?.data?.message ||
-        "Failed to load orders.";
+      const message = error.response?.data?.message || "Failed to load orders.";
 
       set({
         loading: false,
@@ -142,25 +117,19 @@ export const useOrderStore = create<OrderState>((set) => ({
     });
 
     try {
-      const updatedOrder =
-        await updateOrderStatusApi(id, status);
+      const updatedOrder = await updateOrderStatusApi(id, status);
 
       set((state) => ({
         orders: state.orders.map((order) =>
-          order.id === id
-            ? updatedOrder
-            : order
+          order.id === id ? updatedOrder : order
         ),
         currentOrder:
-          state.currentOrder?.id === id
-            ? updatedOrder
-            : state.currentOrder,
+          state.currentOrder?.id === id ? updatedOrder : state.currentOrder,
         loading: false,
       }));
     } catch (error: any) {
       const message =
-        error.response?.data?.message ||
-        "Failed to update order status.";
+        error.response?.data?.message || "Failed to update order status.";
 
       set({
         loading: false,
