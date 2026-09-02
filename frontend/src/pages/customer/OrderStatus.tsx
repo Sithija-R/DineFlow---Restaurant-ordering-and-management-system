@@ -4,14 +4,9 @@ import { useDineFlow } from '../../context/DineFlowContext';
 import { 
   Clock, 
   CheckCircle, 
-  ChefHat, 
-  Utensils, 
-  ShoppingBag, 
   BellRing, 
   RefreshCw, 
   Sparkles, 
-  MapPin, 
-  PhoneCall 
 } from 'lucide-react';
 import type { OrderStatus } from '@/types/order';
 

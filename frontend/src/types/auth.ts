@@ -15,3 +15,10 @@ export interface LoginResponse {
   token: string;
   userInfo: UserInfo;
 }
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+  role: string;
+}

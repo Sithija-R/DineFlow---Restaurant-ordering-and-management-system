@@ -1,5 +1,5 @@
-import { login } from "@/service/authService";
-import type { LoginRequest, UserInfo } from "@/types/auth";
+import { login, register } from "@/service/authService";
+import type { LoginRequest, RegisterRequest, UserInfo } from "@/types/auth";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -11,6 +11,7 @@ interface AuthState {
     error : string | null;
 
     login:(request : LoginRequest) => Promise<void>;
+    register : (request : RegisterRequest) => Promise<void>;
     logout:() => void;
     clearError:() => void;
 }
@@ -40,6 +41,27 @@ export const useAuthStore = create<AuthState>()(
                     });
                 } catch (error: any) {
                     const message = error.response?.data?.message || "Login failed. Please check your credentials.";
+                    set({ loading: false, error: message });
+                    throw new Error(message);
+                }
+            },
+
+            register: async (request: RegisterRequest) =>{
+                set({ loading: true, error: null });
+
+                try {
+                    const response = await register(request); 
+                    localStorage.setItem("token", response.token);
+
+                    set({
+                        token: response.token,
+                        userInfo: response.userInfo,
+                        isAuthenticated: true,
+                        loading: false,
+                        error: null,
+                    });
+                } catch (error: any) {
+                    const message = error.response?.data?.message || "Registration failed. Please check your input.";
                     set({ loading: false, error: message });
                     throw new Error(message);
                 }

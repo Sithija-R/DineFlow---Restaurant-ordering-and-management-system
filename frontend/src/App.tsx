@@ -16,6 +16,7 @@ import Dashboard from './pages/admin/Dashboard';
 import MenuManagement from './pages/admin/MenuManagement';
 import OrderManagement from './pages/admin/OrderManagement';
 import ReservationManagement from './pages/admin/ReservationManagement';
+import { Toaster } from './components/ui/toast';
 
 export default function App() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
           </footer>
         </div>
       </Router>
+      <Toaster />
     </DineFlowProvider>
   );
 }
