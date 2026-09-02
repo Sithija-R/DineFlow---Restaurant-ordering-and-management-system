@@ -1,7 +1,5 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useDineFlow } from "../context/DineFlowContext";
 
+import { Link, useLocation } from "react-router-dom";
 import {
   UtensilsCrossed,
   ShoppingBag,
@@ -21,18 +19,17 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { useCartStore } from "@/stores/cartStore";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function Navbar() {
-  const {
-    cart,
-    setIsCartOpen,
-    adminAuth,
-    logoutAdmin,
-  } = useDineFlow();
+  
+  const { isAuthenticated, logout } = useAuthStore();
+  const { items, setIsCartOpen } = useCartStore();
 
   const location = useLocation();
 
-  const totalCartItems = cart.reduce(
+  const totalCartItems = items.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
@@ -124,7 +121,7 @@ export default function Navbar() {
             </Button>
 
             {/* Admin */}
-            {adminAuth.isAuthenticated ? (
+            {isAuthenticated ? (
               <div className="flex items-center gap-2 border-l border-slate-800 pl-2">
                 <Button
                   variant="outline"
@@ -138,7 +135,7 @@ export default function Navbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={logoutAdmin}
+                  onClick={logout}
                   className="text-xs text-slate-400 hover:bg-transparent hover:text-red-400"
                 >
                   Exit Admin
@@ -250,7 +247,7 @@ export default function Navbar() {
             render={
               <Link
                 to={
-                  adminAuth.isAuthenticated
+                  isAuthenticated
                     ? "/admin/dashboard"
                     : "/admin/login"
                 }
@@ -260,7 +257,7 @@ export default function Navbar() {
           />
         }
       >
-        {adminAuth.isAuthenticated ? (
+        {isAuthenticated ? (
           <>
             <ChefHat className="mr-3 h-5 w-5" />
             Admin Dashboard
@@ -273,10 +270,10 @@ export default function Navbar() {
         )}
       </SheetClose>
 
-      {adminAuth.isAuthenticated && (
+      {isAuthenticated && (
         <Button
           variant="ghost"
-          onClick={logoutAdmin}
+          onClick={logout}
           className="mt-3 w-full text-slate-400 hover:bg-transparent hover:text-red-400"
         >
           Exit Admin

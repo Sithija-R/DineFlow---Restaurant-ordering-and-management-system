@@ -10,7 +10,7 @@ export const getCategories = async (): Promise<Category[]> => {
   const response = await menuClient.get<Category[]>(
     "/api/categories"
   );
-
+    console.log("Fetched categories:", response.data);
   return response.data;
 };
 
