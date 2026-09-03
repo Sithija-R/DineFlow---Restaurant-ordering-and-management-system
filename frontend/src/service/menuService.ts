@@ -1,5 +1,6 @@
 import { menuClient } from "./api";
 import type {
+  AvailabilityStatus,
   Category,
   CategoryRequest,
   MenuItem,
@@ -7,27 +8,19 @@ import type {
 } from "../types/menu";
 
 export const getCategories = async (): Promise<Category[]> => {
-  const response = await menuClient.get<Category[]>(
-    "/api/categories"
-  );
-    console.log("Fetched categories:", response.data);
+  const response = await menuClient.get<Category[]>("/api/categories");
+  console.log("Fetched categories:", response.data);
   return response.data;
 };
 
 export const getMenuItems = async (): Promise<MenuItem[]> => {
-  const response = await menuClient.get<MenuItem[]>(
-    "/api/menu-items"
-  );
+  const response = await menuClient.get<MenuItem[]>("/api/menu-items");
 
   return response.data;
 };
 
-export const getMenuItem = async (
-  id: number
-): Promise<MenuItem> => {
-  const response = await menuClient.get<MenuItem>(
-    `/api/menu-items/${id}`
-  );
+export const getMenuItem = async (id: number): Promise<MenuItem> => {
+  const response = await menuClient.get<MenuItem>(`/api/menu-items/${id}`);
 
   return response.data;
 };
@@ -35,10 +28,7 @@ export const getMenuItem = async (
 export const createMenuItem = async (
   request: MenuItemRequest
 ): Promise<MenuItem> => {
-  const response = await menuClient.post<MenuItem>(
-    "/api/menu-items",
-    request
-  );
+  const response = await menuClient.post<MenuItem>("/api/menu-items", request);
 
   return response.data;
 };
@@ -55,19 +45,14 @@ export const updateMenuItem = async (
   return response.data;
 };
 
-export const deleteMenuItem = async (
-  id: number
-): Promise<void> => {
+export const deleteMenuItem = async (id: number): Promise<void> => {
   await menuClient.delete(`/api/menu-items/${id}`);
 };
 
 export const createCategory = async (
   request: CategoryRequest
 ): Promise<Category> => {
-  const response = await menuClient.post<Category>(
-    "/api/categories",
-    request
-  );
+  const response = await menuClient.post<Category>("/api/categories", request);
 
   return response.data;
 };
@@ -84,8 +69,22 @@ export const updateCategory = async (
   return response.data;
 };
 
-export const deleteCategory = async (
-  id: number
-): Promise<void> => {
+export const deleteCategory = async (id: number): Promise<void> => {
   await menuClient.delete(`/api/categories/${id}`);
+};
+
+export const updateItemAvailability = async (
+  id: number,
+  status: AvailabilityStatus
+): Promise<MenuItem> => {
+  const response = await menuClient.patch<MenuItem>(
+    `/api/menu-items/${id}/availability`,null,
+    {
+      params: {
+        status,
+      },
+    }
+  );
+
+  return response.data;
 };

@@ -8,8 +8,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dineflow
     username: postgres
-    password: ******
-
+    password: *******
   jpa:
     hibernate:
       ddl-auto: update

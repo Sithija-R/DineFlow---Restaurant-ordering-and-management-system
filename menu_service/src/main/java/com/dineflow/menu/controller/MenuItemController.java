@@ -52,10 +52,11 @@ public class MenuItemController {
         }
 
         @DeleteMapping("/{id}")
-        public ResponseEntity<Map<String, String>> deleteMenuItem( @PathVariable("id") Long id) {
+        public ResponseEntity<Map<String, String>> deleteMenuItem(@PathVariable("id") Long id) {
 
                 menuItemService.deleteMenuItem(id);
-                Map<String, String> response = new HashMap<>(); response.put("message", "Menu item deleted successfully");
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "Menu item deleted successfully");
                 return ResponseEntity.ok(response);
         }
 

@@ -73,4 +73,27 @@ public class GlobalExceptionHandler {
                                 .status(status)
                                 .body(response);
         }
+
+        @ExceptionHandler(TableAlreadyReservedException.class)
+        public ResponseEntity<ErrorResponse> handleTableAlreadyReserved(
+                        TableAlreadyReservedException ex) {
+                
+                ErrorResponse response = new ErrorResponse(
+                                HttpStatus.CONFLICT.value(),
+                                ex.getMessage(),
+                                LocalDateTime.now());
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(response);
+        }
+
+        @ExceptionHandler(IllegalArgumentException.class)
+        public ResponseEntity<ErrorResponse> handleIllegalArgument(
+                        IllegalArgumentException ex) {
+
+                return buildResponse(
+                                HttpStatus.BAD_REQUEST,
+                                ex.getMessage());
+        }
 }

@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 
 export default function Cart() {
@@ -27,7 +26,7 @@ export default function Cart() {
     clearCart,
   } = useCartStore();
 
-  const [notes, setNotes] = useState("");
+  
 
   const navigate = useNavigate();
 
@@ -80,9 +79,7 @@ export default function Cart() {
     setIsCartOpen(false);
 
     navigate("/checkout", {
-      state: {
-        notes,
-      },
+
     });
   };
 
@@ -260,21 +257,6 @@ export default function Cart() {
                     </div>
                   );
                 })}
-
-                {/* Notes */}
-                <div className="pt-2">
-                  <label className="mb-1.5 block text-xs font-medium text-slate-300">
-                    Special Preparation Notes
-                  </label>
-
-                  <Textarea
-                    rows={2}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="e.g. Extra spicy, sauce on the side..."
-                    className="resize-none rounded-xl border-slate-800 bg-slate-950 text-xs text-white  focus-visible:border-orange-500/50 focus-visible:ring-orange-500/20"
-                  />
-                </div>
               </>
             )}
           </div>
