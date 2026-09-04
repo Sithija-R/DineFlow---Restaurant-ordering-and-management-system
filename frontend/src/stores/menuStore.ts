@@ -7,10 +7,12 @@ import {
   getCategories,
   getMenuItems,
   updateCategory as updateCategoryApi,
+  updateItemAvailability,
   updateMenuItem as updateMenuItemApi,
 } from "../service/menuService";
 
 import type {
+  AvailabilityStatus,
   Category,
   CategoryRequest,
   MenuItem,
@@ -34,7 +36,7 @@ interface MenuState {
   createCategory: (request: CategoryRequest) => Promise<void>;
   updateCategory: (id: number, request: CategoryRequest) => Promise<void>;
   deleteCategory: (id: number) => Promise<void>;
-
+  updateAvailabilityStatus: ( id: number, status: AvailabilityStatus) => Promise<MenuItem>;
   clearError: () => void;
 }
 
@@ -57,9 +59,9 @@ export const useMenuStore = create<MenuState>((set) => ({
         menuItems,
         loading: false,
       });
-
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to load menu items.";
+      const message =
+        error.response?.data?.message || "Failed to load menu items.";
 
       set({
         loading: false,
@@ -83,9 +85,9 @@ export const useMenuStore = create<MenuState>((set) => ({
         categories,
         loading: false,
       });
-
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to load categories.";
+      const message =
+        error.response?.data?.message || "Failed to load categories.";
 
       set({
         loading: false,
@@ -110,7 +112,8 @@ export const useMenuStore = create<MenuState>((set) => ({
         loading: false,
       }));
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to create menu item.";
+      const message =
+        error.response?.data?.message || "Failed to create menu item.";
 
       set({
         loading: false,
@@ -137,7 +140,8 @@ export const useMenuStore = create<MenuState>((set) => ({
         loading: false,
       }));
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to update menu item.";
+      const message =
+        error.response?.data?.message || "Failed to update menu item.";
 
       set({
         loading: false,
@@ -162,7 +166,8 @@ export const useMenuStore = create<MenuState>((set) => ({
         loading: false,
       }));
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to delete menu item.";
+      const message =
+        error.response?.data?.message || "Failed to delete menu item.";
 
       set({
         loading: false,
@@ -187,7 +192,8 @@ export const useMenuStore = create<MenuState>((set) => ({
         loading: false,
       }));
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to create category.";
+      const message =
+        error.response?.data?.message || "Failed to create category.";
 
       set({
         loading: false,
@@ -214,7 +220,8 @@ export const useMenuStore = create<MenuState>((set) => ({
         loading: false,
       }));
     } catch (error: any) {
-      const message = error.response?.data?.message || "Failed to update category.";
+      const message =
+        error.response?.data?.message || "Failed to update category.";
 
       set({
         loading: false,
@@ -246,6 +253,26 @@ export const useMenuStore = create<MenuState>((set) => ({
         error: message,
       });
 
+      throw new Error(message);
+    }
+  },
+
+  updateAvailabilityStatus: async (id, status) => {
+    set({ loading: true, error: null });
+    try {
+      const updatedMenuItem = await updateItemAvailability(id, status);
+      set((state) => ({
+        menuItems: state.menuItems.map((item) =>
+          item.id === id ? updatedMenuItem : item
+        ),
+        loading: false,
+      }));
+      return updatedMenuItem;
+
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message || "Failed to update item availability.";
+      set({ loading: false, error: message });
       throw new Error(message);
     }
   },

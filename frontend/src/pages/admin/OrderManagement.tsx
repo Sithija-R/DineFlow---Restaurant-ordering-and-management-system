@@ -1,172 +1,305 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDineFlow } from '../../context/DineFlowContext';
-import { 
-  ShoppingBag, 
-  Clock, 
-  ChefHat, 
-  CheckCircle2, 
-  ArrowLeft, 
-  Search, 
-  Filter, 
-  ArrowRight, 
-  AlertCircle,
-  Phone,
-  User,
-  Utensils
-} from 'lucide-react';
+import  { useEffect, useState } from "react";
 
-const columns = [
-  { key: 'Placed', label: 'Placed / New', color: 'border-amber-500/40 bg-amber-500/5 text-amber-400' },
-  { key: 'Preparing', label: 'In Preparation', color: 'border-orange-500/40 bg-orange-500/5 text-orange-400' },
-  { key: 'Ready', label: 'Ready to Serve', color: 'border-blue-500/40 bg-blue-500/5 text-blue-400' },
-  { key: 'Delivered', label: 'Completed', color: 'border-emerald-500/40 bg-emerald-500/5 text-emerald-400' }
+import { Link } from "react-router-dom";
+
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Phone,
+  Search,
+  User,
+} from "lucide-react";
+
+import type { OrderStatus } from "../../types/order";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Card } from "../../components/ui/card";
+import { Badge } from "../../components/ui/badge";
+import { toast } from "../../components/ui/toast";
+import { useOrderStore } from "@/stores/orderStore";
+
+const columns: {
+  key: OrderStatus;
+  label: string;
+  color: string;
+}[] = [
+  {
+    key: "PLACED",
+    label: "Placed / New",
+    color: "border-amber-500/40 bg-amber-500/5 text-amber-400",
+  },
+  {
+    key: "CONFIRMED",
+    label: "Confirmed",
+    color: "border-cyan-500/40 bg-cyan-500/5 text-cyan-400",
+  },
+  {
+    key: "PREPARING",
+    label: "In Preparation",
+    color: "border-orange-500/40 bg-orange-500/5 text-orange-400",
+  },
+  {
+    key: "READY",
+    label: "Ready to Serve",
+    color: "border-blue-500/40 bg-blue-500/5 text-blue-400",
+  },
+  {
+    key: "COMPLETED",
+    label: "Completed",
+    color: "border-emerald-500/40 bg-emerald-500/5 text-emerald-400",
+  },
 ];
 
 export default function OrderManagement() {
-  const { orders, updateOrderStatus } = useDineFlow();
-  const [searchQuery, setSearchQuery] = useState('');
+  const { orders, loading, fetchOrders, updateOrderStatus } = useOrderStore();
 
-  const filteredOrders = orders.filter((o) => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    fetchOrders().catch((error) => {
+      console.error("Failed to load orders:", error);
+
+      toast.add({
+        title: "Failed to load orders",
+        description:
+          error instanceof Error ? error.message : "Unable to load orders.",
+        type: "error",
+      });
+    });
+  }, [fetchOrders]);
+
+  const filteredOrders = orders.filter((order) => {
+    const query = searchQuery.toLowerCase();
+
     return (
-      o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.tableNumber.toLowerCase().includes(searchQuery.toLowerCase())
+      order.orderReference.toLowerCase().includes(query) ||
+      order.customerName.toLowerCase().includes(query) ||
+      order.phoneNumber.toLowerCase().includes(query)
     );
   });
 
+  const handleStatusUpdate = async (
+    orderId: number,
+    status: OrderStatus,
+    orderReference: string
+  ) => {
+    try {
+      await updateOrderStatus(orderId, status);
+
+      toast.add({
+        title: "Order status updated",
+        description: `${orderReference} is now ${status.toLowerCase()}.`,
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+
+      toast.add({
+        title: "Status update failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Unable to update order status.",
+        type: "error",
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        
+    <div className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-6">
         {/* Navigation Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+        <div className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900/90 p-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <Link to="/admin/dashboard" className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300">
-              <ArrowLeft className="w-4 h-4" />
+            <Link
+              to="/admin/dashboard"
+              className="rounded-xl bg-slate-800 p-2 text-slate-300 hover:bg-slate-700"
+            >
+              <ArrowLeft className="h-4 w-4" />
             </Link>
+
             <div>
-              <h1 className="text-lg font-bold text-white">Live Kitchen & Order Kanban Board</h1>
-              <p className="text-xs text-slate-400">Track and advance order status in real time</p>
+              <h1 className="text-lg font-bold text-white">
+                Live Kitchen & Order Kanban Board
+              </h1>
+
+              <p className="text-xs text-slate-400">
+                Track and advance order status in real time
+              </p>
             </div>
           </div>
 
-          {/* Search Input */}
+          {/* Search */}
           <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
-            <input
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
+            <Input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by ID, Table, Name..."
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none"
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search by ID, Name, Phone..."
+              className="border-slate-800 bg-slate-950 pl-10 text-xs text-white placeholder:text-slate-500"
             />
           </div>
         </div>
 
-        {/* Kanban Board Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {columns.map((col) => {
-            const colOrders = filteredOrders.filter((o) => o.status === col.key);
+        {/* Kanban Board */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {columns.map((column) => {
+            const columnOrders = filteredOrders.filter(
+              (order) => order.status === column.key
+            );
+
             return (
               <div
-                key={col.key}
-                className="bg-slate-900/60 rounded-2xl p-4 border border-slate-800/80 flex flex-col h-[calc(100vh-200px)] min-h-[500px]"
+                key={column.key}
+                className="flex h-[calc(100vh-200px)] min-h-[500px] flex-col rounded-2xl border border-slate-800/80 bg-slate-900/60 p-4"
               >
                 {/* Column Header */}
-                <div className={`p-3 rounded-xl border mb-4 flex items-center justify-between font-bold text-xs ${col.color}`}>
-                  <span>{col.label}</span>
-                  <span className="w-6 h-6 rounded-full bg-slate-950/80 flex items-center justify-center text-xs">
-                    {colOrders.length}
+                <div
+                  className={`mb-4 flex items-center justify-between rounded-xl border p-3 text-xs font-bold ${column.color}`}
+                >
+                  <span>{column.label}</span>
+
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-950/80 text-xs">
+                    {columnOrders.length}
                   </span>
                 </div>
 
-                {/* Orders Cards List */}
-                <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-                  {colOrders.length === 0 ? (
-                    <div className="h-32 flex items-center justify-center text-center text-xs text-slate-600 border border-dashed border-slate-800 rounded-xl p-4">
+                {/* Orders */}
+                <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+                  {loading && columnOrders.length === 0 ? (
+                    <div className="flex h-32 items-center justify-center rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-600">
+                      Loading orders...
+                    </div>
+                  ) : columnOrders.length === 0 ? (
+                    <div className="flex h-32 items-center justify-center rounded-xl border border-dashed border-slate-800 p-4 text-center text-xs text-slate-600">
                       No orders in this stage
                     </div>
                   ) : (
-                    colOrders.map((ord) => (
-                      <div
-                        key={ord.id}
-                        className="bg-slate-950 rounded-2xl p-4 border border-slate-800 hover:border-orange-500/40 transition-all space-y-3 shadow-lg"
+                    columnOrders.map((order) => (
+                      <Card
+                        key={order.id}
+                        className="space-y-3 rounded-2xl border border-slate-800 bg-slate-950 p-4 shadow-lg transition-all hover:border-orange-500/40"
                       >
+                        {/* Order Header */}
                         <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <span className="font-extrabold text-orange-400 text-xs">{ord.id}</span>
-                          <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800">
-                            {ord.tableNumber}
+                          <span className="text-xs font-extrabold text-orange-400">
+                            {order.orderReference}
                           </span>
+
+                          <Badge
+                            variant="outline"
+                            className="border-slate-800 bg-slate-900 text-[11px] text-slate-300"
+                          >
+                            {order.orderType === "DINE_IN"
+                              ? "Dine In"
+                              : "Takeaway"}
+                          </Badge>
                         </div>
 
+                        {/* Customer */}
                         <div>
-                          <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
-                            <User className="w-3.5 h-3.5 text-slate-400" />
-                            {ord.customerName}
+                          <h4 className="flex items-center gap-1.5 text-xs font-bold text-white">
+                            <User className="h-3.5 w-3.5 text-slate-400" />
+                            {order.customerName}
                           </h4>
-                          <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
-                            <Phone className="w-3 h-3 text-slate-500" />
-                            {ord.customerPhone}
+
+                          <p className="mt-0.5 flex items-center gap-1 text-[11px] text-slate-400">
+                            <Phone className="h-3 w-3 text-slate-500" />
+                            {order.phoneNumber}
                           </p>
                         </div>
 
-                        {/* Items summary */}
-                        <div className="bg-slate-900/80 p-2.5 rounded-xl text-[11px] space-y-1 text-slate-300">
-                          {ord.items?.map((it, idx) => (
-                            <div key={idx} className="flex justify-between">
-                              <span className="truncate max-w-[140px]">{it.quantity}x {it.name}</span>
-                              <span className="font-semibold text-slate-400">${((it.price || 0) * (it.quantity || 1)).toFixed(2)}</span>
+                        {/* Items */}
+                        <div className="space-y-1 rounded-xl bg-slate-900/80 p-2.5 text-[11px] text-slate-300">
+                          {order.items.map((item) => (
+                            <div
+                              key={item.menuItemId}
+                              className="flex justify-between gap-2"
+                            >
+                              <span className="max-w-[140px] truncate">
+                                {item.quantity}x {item.menuItemName}
+                              </span>
+
+                              <span className="font-semibold text-slate-400">
+                                ${item.subtotal.toFixed(2)}
+                              </span>
                             </div>
                           ))}
-                          {ord.notes && (
-                            <div className="pt-1 text-[10px] text-amber-400 border-t border-slate-800">
-                              Note: {ord.notes}
-                            </div>
-                          )}
                         </div>
 
-                        {/* Total & Status Changer */}
+                        {/* Total & Actions */}
                         <div className="flex items-center justify-between pt-1 text-xs">
-                          <span className="font-bold text-white">${ord.total?.toFixed(2)}</span>
+                          <span className="font-bold text-white">
+                            ${order.total.toFixed(2)}
+                          </span>
+
                           <div className="flex gap-1">
-                            {col.key === 'Placed' && (
-                              <button
-                                onClick={() => updateOrderStatus(ord.id, 'Preparing')}
-                                className="px-2.5 py-1 rounded-lg bg-orange-500 text-white font-bold text-[11px] flex items-center gap-1"
+                            {/* PLACED → PREPARING */}
+                            {column.key === "PLACED" && (
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  handleStatusUpdate(
+                                    order.id,
+                                    "PREPARING",
+                                    order.orderReference
+                                  )
+                                }
+                                className="h-7 bg-orange-500 px-2.5 text-[11px] font-bold text-white hover:bg-orange-600"
                               >
-                                Cook <ArrowRight className="w-3 h-3" />
-                              </button>
+                                Cook
+                                <ArrowRight className="ml-1 h-3 w-3" />
+                              </Button>
                             )}
-                            {col.key === 'Preparing' && (
-                              <button
-                                onClick={() => updateOrderStatus(ord.id, 'Ready')}
-                                className="px-2.5 py-1 rounded-lg bg-blue-500 text-white font-bold text-[11px] flex items-center gap-1"
+
+                            {/* PREPARING → READY */}
+                            {column.key === "PREPARING" && (
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  handleStatusUpdate(
+                                    order.id,
+                                    "READY",
+                                    order.orderReference
+                                  )
+                                }
+                                className="h-7 bg-blue-500 px-2.5 text-[11px] font-bold text-white hover:bg-blue-600"
                               >
-                                Ready <ArrowRight className="w-3 h-3" />
-                              </button>
+                                Ready
+                                <ArrowRight className="ml-1 h-3 w-3" />
+                              </Button>
                             )}
-                            {col.key === 'Ready' && (
-                              <button
-                                onClick={() => updateOrderStatus(ord.id, 'Delivered')}
-                                className="px-2.5 py-1 rounded-lg bg-emerald-500 text-white font-bold text-[11px] flex items-center gap-1"
+
+                            {/* READY → COMPLETED */}
+                            {column.key === "READY" && (
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  handleStatusUpdate(
+                                    order.id,
+                                    "COMPLETED",
+                                    order.orderReference
+                                  )
+                                }
+                                className="h-7 bg-emerald-500 px-2.5 text-[11px] font-bold text-white hover:bg-emerald-600"
                               >
-                                Serve <CheckCircle2 className="w-3 h-3" />
-                              </button>
+                                Serve
+                                <CheckCircle2 className="ml-1 h-3 w-3" />
+                              </Button>
                             )}
                           </div>
                         </div>
-
-                      </div>
+                      </Card>
                     ))
                   )}
                 </div>
-
               </div>
             );
           })}
         </div>
-
       </div>
     </div>
   );

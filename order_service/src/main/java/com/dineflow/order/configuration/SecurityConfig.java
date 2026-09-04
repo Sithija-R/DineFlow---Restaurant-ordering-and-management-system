@@ -1,6 +1,7 @@
 package com.dineflow.order.configuration;
 
 import com.dineflow.order.security.JwtAuthenticationFilter;
+
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -20,100 +21,132 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain securityFilterChain( HttpSecurity http ) throws Exception {
-
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
-
-                .authorizeHttpRequests(auth -> auth
-
-                        // Customer - place order
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/orders"
-                        ).permitAll()
-
-                        // Customer - check order
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/orders/*"
-                        ).permitAll()
-
-                        // Admin - view orders
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/orders"
-                        ).hasRole("ADMIN")
-
-                        // Admin - update status
-                        .requestMatchers(
-                                HttpMethod.PATCH,
-                                "/api/orders/*/status"
-                        ).hasRole("ADMIN")
-
-                        // Swagger
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**"
-                        ).permitAll()
-
-                        .anyRequest().authenticated()
-                )
-
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
-
-        return http.build();
-    }
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
         @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+        public SecurityFilterChain securityFilterChain(
+                        HttpSecurity http) throws Exception {
 
-        CorsConfiguration configuration = new CorsConfiguration();
+                http
+                                .csrf(csrf -> csrf.disable())
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
-        );
+                                .cors(cors -> cors.configurationSource(
+                                                corsConfigurationSource()))
 
-        configuration.setAllowedMethods(
-                List.of(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "PATCH",
-                        "DELETE",
-                        "OPTIONS"
-                )
-        );
+                                .sessionManagement(session -> session.sessionCreationPolicy(
+                                                SessionCreationPolicy.STATELESS))
 
-        configuration.setAllowedHeaders(
-                List.of(
-                        "Authorization",
-                        "Content-Type"
-                )
-        );
+                                .authorizeHttpRequests(auth -> auth
 
-        configuration.setAllowCredentials(true);
+                                                // CUSTOMER - PLACE ORDER
+                                                .requestMatchers(
+                                                                HttpMethod.POST,
+                                                                "/api/orders")
+                                                .permitAll()
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+                                                // CUSTOMER - CHECK ORDER
+                                                .requestMatchers(
+                                                                HttpMethod.GET,
+                                                                "/api/orders/*")
+                                                .permitAll()
 
-        source.registerCorsConfiguration(
-                "/**",
-                configuration
-        );
+                                                // ADMIN - VIEW ORDERS
+                                                .requestMatchers(
+                                                                HttpMethod.GET,
+                                                                "/api/orders")
+                                                .hasRole("ADMIN")
 
-        return source;
-    }
+                                                // ADMIN - UPDATE ORDER STATUS
+                                                .requestMatchers(
+                                                                HttpMethod.PATCH,
+                                                                "/api/orders/*/status")
+                                                .hasRole("ADMIN")
+
+                                                // CUSTOMER - VIEW RESTAURANT TABLES
+                                                .requestMatchers(
+                                                                HttpMethod.GET,
+                                                                "/api/tables",
+                                                                "/api/tables/*")
+                                                .permitAll()
+
+                                                // CUSTOMER - CREATE RESERVATION
+                                                .requestMatchers(
+                                                                HttpMethod.POST,
+                                                                "/api/reservations")
+                                                .permitAll()
+
+                                                // CUSTOMER - VIEW RESERVATION BY ID
+                                                .requestMatchers(
+                                                                HttpMethod.GET,
+                                                                "/api/reservations/*")
+                                                .permitAll()
+
+                                                // CUSTOMER - VIEW RESERVATION BY REFERENCE
+                                                .requestMatchers(
+                                                                HttpMethod.GET,
+                                                                "/api/reservations/reference/*")
+                                                .permitAll()
+
+                                                // Customer - VIEW RESERVATIONS
+                                                .requestMatchers(
+                                                                HttpMethod.GET,
+                                                                "/api/reservations")
+                                                .permitAll()
+
+                                                // ADMIN - UPDATE RESERVATION STATUS
+                                                .requestMatchers(
+                                                                HttpMethod.PATCH,
+                                                                "/api/reservations/*/status")
+                                                .hasRole("ADMIN")
+
+                                                // SWAGGER
+                                                .requestMatchers(
+                                                                "/swagger-ui/**",
+                                                                "/v3/api-docs/**")
+                                                .permitAll()
+
+                                                // EVERYTHING ELSE
+                                                .anyRequest().authenticated())
+
+                                .addFilterBefore(
+                                                jwtAuthenticationFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
+
+                return http.build();
+        }
+
+        // CORS
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+
+                CorsConfiguration configuration = new CorsConfiguration();
+
+                configuration.setAllowedOrigins(
+                                List.of("http://localhost:5173",
+                                                "http://localhost:5174"));
+
+                configuration.setAllowedMethods(
+                                List.of(
+                                                "GET",
+                                                "POST",
+                                                "PUT",
+                                                "PATCH",
+                                                "DELETE",
+                                                "OPTIONS"));
+
+                configuration.setAllowedHeaders(
+                                List.of(
+                                                "Authorization",
+                                                "Content-Type"));
+
+                configuration.setAllowCredentials(true);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+                source.registerCorsConfiguration(
+                                "/**",
+                                configuration);
+
+                return source;
+        }
 }

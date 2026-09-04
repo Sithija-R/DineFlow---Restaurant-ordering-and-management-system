@@ -554,7 +554,7 @@ export default function Dashboard() {
                       <tr>
                         <th className="px-4 py-3 font-semibold">Order</th>
                         <th className="px-4 py-3 font-semibold">Customer</th>
-                        <th className="px-4 py-3 font-semibold">Table / Type</th>
+                        {/* <th className="px-4 py-3 font-semibold">Table / Type</th> */}
                         <th className="px-4 py-3 font-semibold">Total</th>
                         <th className="px-4 py-3 font-semibold">Status</th>
                         <th className="px-4 py-3 text-right font-semibold">Update</th>
@@ -587,12 +587,12 @@ export default function Dashboard() {
                             </div>
                           </td>
 
-                          <td className="px-4 py-3 text-slate-400">
+                          {/* <td className="px-4 py-3 text-slate-400">
                             {getOrderLocation(
                               order.orderType,
                               order.tableNumber
                             )}
-                          </td>
+                          </td> */}
 
                           <td className="px-4 py-3 font-semibold text-slate-200">
                             ${order.total.toFixed(2)}

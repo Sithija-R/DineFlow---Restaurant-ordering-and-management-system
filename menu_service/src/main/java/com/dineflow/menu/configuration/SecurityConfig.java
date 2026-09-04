@@ -42,9 +42,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // ==========================================
                         // Public customer endpoints
-                        // ==========================================
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/menu-items/**",
@@ -52,18 +50,14 @@ public class SecurityConfig {
                         )
                         .permitAll()
 
-                        // ==========================================
                         // Swagger
-                        // ==========================================
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         )
                         .permitAll()
 
-                        // ==========================================
                         // Admin - Create
-                        // ==========================================
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/menu-items",
@@ -71,9 +65,7 @@ public class SecurityConfig {
                         )
                         .hasRole("ADMIN")
 
-                        // ==========================================
                         // Admin - Update
-                        // ==========================================
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/menu-items/**",
@@ -81,9 +73,7 @@ public class SecurityConfig {
                         )
                         .hasRole("ADMIN")
 
-                        // ==========================================
                         // Admin - Delete
-                        // ==========================================
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/api/menu-items/**",
@@ -91,27 +81,21 @@ public class SecurityConfig {
                         )
                         .hasRole("ADMIN")
 
-                        // ==========================================
                         // Order Service - Reduce Stock
-                        // ==========================================
                         .requestMatchers(
                                 HttpMethod.PATCH,
                                 "/api/menu-items/*/reduce-stock"
                         )
                         .permitAll()
 
-                        // ==========================================
                         // Other PATCH operations - Admin only
-                        // ==========================================
                         .requestMatchers(
                                 HttpMethod.PATCH,
                                 "/api/menu-items/**"
                         )
                         .hasRole("ADMIN")
 
-                        // ==========================================
                         // Everything else
-                        // ==========================================
                         .anyRequest()
                         .authenticated()
                 )
@@ -124,16 +108,17 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ==========================================
+
     // CORS Configuration
-    // ==========================================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+                List.of("http://localhost:5173",
+                        "http://localhost:5174"
+                        )
         );
 
         configuration.setAllowedMethods(

@@ -36,7 +36,6 @@ export interface OrderResponse {
   customerName: string;
   phoneNumber: string;
   orderType: OrderType;
-  tableNumber?: number;
   status: OrderStatus;
   total: number;
   createdAt: string;

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+
 import { useLocation, useNavigate } from "react-router-dom";
+
 import {
   CreditCard,
   Smartphone,
@@ -21,13 +23,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import type { OrderRequest, OrderType } from "@/types/order";
 import { useCartStore } from "@/stores/cartStore";
@@ -47,26 +42,26 @@ export default function Checkout() {
   const { createOrder, loading } = useOrderStore();
 
   const [orderType, setOrderType] = useState<OrderType>("DINE_IN");
-  const [tableNumber, setTableNumber] = useState<string>("4");
+
   const [customerName, setCustomerName] = useState("");
+
   const [customerPhone, setCustomerPhone] = useState("");
+
   const [customerEmail, setCustomerEmail] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Credit Card");
+
+  const [paymentMethod, setPaymentMethod] =
+    useState<PaymentMethod>("Credit Card");
 
   const [notes, setNotes] = useState<string>(location.state?.notes || "");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
 
   const subtotal = getTotal();
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
   const itemCount = getItemCount();
 
-  /*
-   * If there are no items in the cart,
-   * don't allow checkout.
-   */
+
   if (itemCount === 0) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-center">
@@ -95,7 +90,12 @@ export default function Checkout() {
     e.preventDefault();
 
     if (!customerName.trim() || !customerPhone.trim()) {
-      alert("Please fill out your name and contact phone number.");
+      toast.add({
+        title: "Required information missing",
+        description: "Please fill out your name and contact phone number.",
+        type: "warning",
+      });
+
       return;
     }
 
@@ -108,18 +108,15 @@ export default function Checkout() {
       customerName: customerName.trim(),
       phoneNumber: customerPhone.trim(),
       orderType,
-      ...(orderType === "DINE_IN"
-        ? {
-            tableNumber: Number(tableNumber),
-          }
-        : {}),
-
+      tableNumber: 1,
       items: orderItems,
     };
 
     try {
       setIsSubmitting(true);
+
       const createdOrder = await createOrder(orderRequest);
+
       clearCart();
 
       navigate("/order-status", {
@@ -131,12 +128,13 @@ export default function Checkout() {
     } catch (error) {
       toast.add({
         title: "Order Submission Failed",
-        description: error instanceof Error ? error.message : "Failed to place order. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to place order. Please try again.",
         type: "error",
-      })
-
-      }
-    finally {
+      });
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -174,6 +172,7 @@ export default function Checkout() {
     <div className="min-h-screen bg-slate-950 px-4 py-10 text-slate-100 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
+
         <div className="mb-8 flex items-end justify-between border-b border-slate-800 pb-5">
           <div>
             <Button
@@ -209,8 +208,10 @@ export default function Checkout() {
           className="grid grid-cols-1 gap-7 lg:grid-cols-12"
         >
           {/* LEFT SIDE */}
+
           <div className="space-y-6 lg:col-span-7">
             {/* Order Experience */}
+
             <Card className="border-slate-800 bg-slate-900/80 text-white">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -222,6 +223,7 @@ export default function Checkout() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   {/* DINE IN */}
+
                   <Button
                     type="button"
                     variant="outline"
@@ -237,15 +239,16 @@ export default function Checkout() {
                     </span>
 
                     <span className="mt-2 text-sm font-bold text-white">
-                      Dine-In Table Service
+                      Dine-In Service
                     </span>
 
                     <span className="mt-1 text-[11px] text-slate-500">
-                      Served directly to your designated table
+                      Enjoy your meal at the restaurant
                     </span>
                   </Button>
 
                   {/* TAKEAWAY */}
+
                   <Button
                     type="button"
                     variant="outline"
@@ -269,41 +272,11 @@ export default function Checkout() {
                     </span>
                   </Button>
                 </div>
-
-                {/* TABLE NUMBER */}
-                {orderType === "DINE_IN" && (
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-slate-300">
-                      Select Your Table Number
-                    </label>
-
-                    <Select value={tableNumber} onValueChange={setTableNumber}>
-                      <SelectTrigger className="border-slate-800 bg-slate-950 text-white">
-                        <SelectValue placeholder="Select table" />
-                      </SelectTrigger>
-
-                      <SelectContent className="border-slate-800 bg-slate-900 text-white">
-                        {[
-                          { value: "1", label: "T-01" },
-                          { value: "2", label: "T-02" },
-                          { value: "3", label: "T-03" },
-                          { value: "4", label: "T-04" },
-                          { value: "5", label: "T-05" },
-                          { value: "8", label: "T-08 (Patio)" },
-                          { value: "10", label: "VIP Table 1" },
-                        ].map((table) => (
-                          <SelectItem key={table.value} value={table.value}>
-                            Table {table.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
               </CardContent>
             </Card>
 
             {/* CONTACT INFORMATION */}
+
             <Card className="border-slate-800 bg-slate-900/80 text-white">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -315,6 +288,7 @@ export default function Checkout() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {/* NAME */}
+
                   <div>
                     <label className="mb-1.5 block text-xs text-slate-300">
                       Full Name *
@@ -334,6 +308,7 @@ export default function Checkout() {
                   </div>
 
                   {/* PHONE */}
+
                   <div>
                     <label className="mb-1.5 block text-xs text-slate-300">
                       Mobile Phone Number *
@@ -355,6 +330,7 @@ export default function Checkout() {
                 </div>
 
                 {/* EMAIL */}
+
                 <div>
                   <label className="mb-1.5 block text-xs text-slate-300">
                     Email Address (Optional for Receipt)
@@ -374,6 +350,7 @@ export default function Checkout() {
                 </div>
 
                 {/* NOTES */}
+
                 <div>
                   <label className="mb-1.5 block text-xs text-slate-300">
                     Kitchen Notes & Dietary Requests
@@ -391,6 +368,7 @@ export default function Checkout() {
             </Card>
 
             {/* PAYMENT METHOD */}
+
             <Card className="border-slate-800 bg-slate-900/80 text-white">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -421,6 +399,7 @@ export default function Checkout() {
           </div>
 
           {/* RIGHT SIDE */}
+
           <div className="lg:col-span-5">
             <Card className="sticky top-28 border-slate-800 bg-slate-900/90 text-white shadow-xl">
               <CardHeader>
@@ -435,6 +414,7 @@ export default function Checkout() {
 
               <CardContent className="space-y-5">
                 {/* ITEMS */}
+
                 <div className="max-h-60 space-y-3 overflow-y-auto pr-1">
                   {items.map((item) => {
                     const menuItem = item.menuItem;
@@ -465,6 +445,7 @@ export default function Checkout() {
                 <Separator className="bg-slate-800" />
 
                 {/* TOTALS */}
+
                 <div className="space-y-2 text-xs text-slate-400">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
@@ -490,6 +471,7 @@ export default function Checkout() {
                 </div>
 
                 {/* SUBMIT */}
+
                 <Button
                   type="submit"
                   disabled={isLoading}

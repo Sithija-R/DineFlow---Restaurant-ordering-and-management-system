@@ -282,12 +282,12 @@ export default function Login() {
 
               <div className="my-6 flex items-center gap-3">
                 <Separator className="flex-1 bg-slate-800" />
-                <span className="text-[11px] text-slate-500">OR</span>
+                {/* <span className="text-[11px] text-slate-500">OR</span> */}
                 <Separator className="flex-1 bg-slate-800" />
               </div>
 
               {/* Registration */}
-              <div className="text-center">
+              {/* <div className="text-center">
                 <p className="text-xs text-slate-400">
                   Need an administrator account?
                 </p>
@@ -300,7 +300,7 @@ export default function Login() {
                 >
                   Create Admin Account
                 </Button>
-              </div>
+              </div> */}
             </>
           )}
 
