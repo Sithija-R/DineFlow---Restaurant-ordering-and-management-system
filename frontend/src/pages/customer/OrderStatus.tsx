@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+
 import { Link, useLocation } from "react-router-dom";
+
 import {
   Clock,
   CheckCircle,
@@ -12,7 +14,12 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -63,22 +70,16 @@ const getStatusStepIndex = (status: OrderStatus): number => {
   switch (status) {
     case "PLACED":
       return 0;
-
     case "CONFIRMED":
       return 1;
-
     case "PREPARING":
       return 2;
-
     case "READY":
       return 3;
-
     case "COMPLETED":
       return 4;
-
     case "CANCELLED":
       return -1;
-
     default:
       return 0;
   }
@@ -112,17 +113,23 @@ const getStatusBadgeClass = (status: OrderStatus) => {
 export default function OrderStatus() {
   const location = useLocation();
 
-  const { currentOrder, loading, error, getOrderByReference } = useOrderStore();
+  const {
+    currentOrder,
+    loading,
+    error,
+    getOrderByReference,
+  } = useOrderStore();
 
   const [searchReference, setSearchReference] = useState("");
 
-  /*
+  /**
    * Checkout sends the newly-created order reference
    * through React Router state.
    */
-  const orderReference = location.state?.orderReference as string | undefined;
+  const orderReference =
+    location.state?.orderReference as string | undefined;
 
-  /*
+  /**
    * Load the order automatically when coming from Checkout.
    */
   useEffect(() => {
@@ -152,7 +159,7 @@ export default function OrderStatus() {
     loadOrder();
   }, [orderReference, getOrderByReference]);
 
-  /*
+  /**
    * Search order by reference.
    */
   const handleSearch = async () => {
@@ -190,7 +197,7 @@ export default function OrderStatus() {
     }
   };
 
-  /*
+  /**
    * Allow Enter key to search.
    */
   const handleSearchKeyDown = (
@@ -201,7 +208,7 @@ export default function OrderStatus() {
     }
   };
 
-  /*
+  /**
    * Refresh currently displayed order.
    */
   const handleRefresh = async () => {
@@ -231,7 +238,7 @@ export default function OrderStatus() {
     }
   };
 
-  /*
+  /**
    * Demo waiter notification.
    */
   const handleCallWaiter = () => {
@@ -239,26 +246,20 @@ export default function OrderStatus() {
       return;
     }
 
-    const locationText =
-      currentOrder.orderType === "DINE_IN" && currentOrder.tableNumber
-        ? `Table ${currentOrder.tableNumber}`
-        : "your table";
-
     toast.add({
       title: "Waiter notified",
-      description: `A waiter has been notified to assist at ${locationText}.`,
+      description: "A waiter has been notified to assist you.",
       type: "success",
     });
   };
 
-  /*
+  /**
    * Loading state.
    */
   if (loading && !currentOrder) {
     return (
       <div className="min-h-screen bg-slate-950 px-4 py-12 text-slate-100">
         <div className="mx-auto max-w-4xl space-y-6">
-          {/* Search bar remains visible while loading */}
           <Card>
             <CardContent className="p-5">
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -267,7 +268,9 @@ export default function OrderStatus() {
 
                   <Input
                     value={searchReference}
-                    onChange={(e) => setSearchReference(e.target.value)}
+                    onChange={(e) =>
+                      setSearchReference(e.target.value)
+                    }
                     onKeyDown={handleSearchKeyDown}
                     placeholder="Enter order reference..."
                     className="border-slate-700 bg-slate-950 pl-10 text-white placeholder:text-slate-500"
@@ -324,7 +327,7 @@ export default function OrderStatus() {
     );
   }
 
-  /*
+  /**
    * No order loaded yet.
    */
   if (!currentOrder) {
@@ -342,7 +345,8 @@ export default function OrderStatus() {
               </CardTitle>
 
               <p className="text-xs text-slate-400">
-                Enter your order reference to view the current kitchen status.
+                Enter your order reference to view the current kitchen
+                status.
               </p>
             </CardHeader>
 
@@ -353,7 +357,9 @@ export default function OrderStatus() {
 
                   <Input
                     value={searchReference}
-                    onChange={(e) => setSearchReference(e.target.value)}
+                    onChange={(e) =>
+                      setSearchReference(e.target.value)
+                    }
                     onKeyDown={handleSearchKeyDown}
                     placeholder="e.g. ORD-2026-001"
                     className="h-11 border-slate-700 bg-slate-950 pl-10 text-white placeholder:text-slate-500 focus-visible:ring-orange-500"
@@ -370,12 +376,15 @@ export default function OrderStatus() {
                   ) : (
                     <Search className="mr-2 h-4 w-4" />
                   )}
+
                   Search
                 </Button>
               </div>
 
               {error && (
-                <p className="mt-3 text-center text-xs text-red-400">{error}</p>
+                <p className="mt-3 text-center text-xs text-red-400">
+                  {error}
+                </p>
               )}
 
               <div className="mt-6 text-center">
@@ -396,7 +405,7 @@ export default function OrderStatus() {
 
   const currentStep = getStatusStepIndex(currentOrder.status);
 
-  /*
+  /**
    * OrderResponse doesn't contain subtotal,
    * so calculate it from order items.
    */
@@ -410,6 +419,7 @@ export default function OrderStatus() {
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-12 text-slate-100 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-8">
+
         {/* ================================= */}
         {/* Search Order                       */}
         {/* ================================= */}
@@ -432,7 +442,9 @@ export default function OrderStatus() {
 
                 <Input
                   value={searchReference}
-                  onChange={(e) => setSearchReference(e.target.value)}
+                  onChange={(e) =>
+                    setSearchReference(e.target.value)
+                  }
                   onKeyDown={handleSearchKeyDown}
                   placeholder="Enter order reference..."
                   className="h-10 border-slate-700 bg-slate-950 pl-10 text-white placeholder:text-slate-500 focus-visible:ring-orange-500"
@@ -449,6 +461,7 @@ export default function OrderStatus() {
                 ) : (
                   <Search className="mr-2 h-4 w-4" />
                 )}
+
                 Search Order
               </Button>
             </div>
@@ -471,9 +484,9 @@ export default function OrderStatus() {
                   </Badge>
 
                   <span className="text-xs text-slate-400">
-                    Order #
+                    Order
                     <strong className="ml-1 text-white">
-                      {currentOrder.orderReference}
+                      #{currentOrder.orderReference}
                     </strong>
                   </span>
                 </div>
@@ -484,8 +497,9 @@ export default function OrderStatus() {
                     className={
                       getStatusBadgeClass(currentOrder.status)
                         .split(" ")
-                        .find((className) => className.startsWith("text-")) ||
-                      "text-slate-400"
+                        .find((className) =>
+                          className.startsWith("text-")
+                        ) || "text-slate-400"
                     }
                   >
                     {currentOrder.status}
@@ -497,16 +511,6 @@ export default function OrderStatus() {
                   <strong className="text-slate-200">
                     {currentOrder.customerName}
                   </strong>
-                  {currentOrder.orderType === "DINE_IN" &&
-                    currentOrder.tableNumber && (
-                      <>
-                        {" "}
-                        · Table{" "}
-                        <strong className="text-slate-200">
-                          {currentOrder.tableNumber}
-                        </strong>
-                      </>
-                    )}
                 </p>
               </div>
 
@@ -522,6 +526,7 @@ export default function OrderStatus() {
                     loading ? "animate-spin" : ""
                   }`}
                 />
+
                 Refresh
               </Button>
             </div>
@@ -529,13 +534,16 @@ export default function OrderStatus() {
 
           <CardContent className="relative pt-8">
             {/* Cancelled */}
+
             {currentOrder.status === "CANCELLED" ? (
               <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-6 text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-400">
                   <Clock className="h-6 w-6" />
                 </div>
 
-                <h3 className="mt-3 font-bold text-white">Order Cancelled</h3>
+                <h3 className="mt-3 font-bold text-white">
+                  Order Cancelled
+                </h3>
 
                 <p className="mt-1 text-xs text-slate-400">
                   Unfortunately, this order has been cancelled.
@@ -543,11 +551,11 @@ export default function OrderStatus() {
               </div>
             ) : (
               /* Status Stepper */
+
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
                 {statusSteps.map((step, index) => {
                   const isPassed = index < currentStep;
                   const isCurrent = index === currentStep;
-
                   const Icon = step.icon;
 
                   return (
@@ -558,8 +566,8 @@ export default function OrderStatus() {
                         isCurrent
                           ? "border-orange-500 bg-orange-500/10 text-white shadow-lg shadow-orange-500/10 ring-1 ring-orange-500"
                           : isPassed
-                          ? "border-emerald-500/40 bg-slate-950/80 text-emerald-400"
-                          : "border-slate-800 bg-slate-950/40 text-slate-500",
+                            ? "border-emerald-500/40 bg-slate-950/80 text-emerald-400"
+                            : "border-slate-800 bg-slate-950/40 text-slate-500",
                       ].join(" ")}
                     >
                       <div
@@ -568,8 +576,8 @@ export default function OrderStatus() {
                           isCurrent
                             ? "bg-orange-500 text-white"
                             : isPassed
-                            ? "bg-emerald-500 text-slate-950"
-                            : "bg-slate-800 text-slate-500",
+                              ? "bg-emerald-500 text-slate-950"
+                              : "bg-slate-800 text-slate-500",
                         ].join(" ")}
                       >
                         {isPassed ? (
@@ -579,7 +587,9 @@ export default function OrderStatus() {
                         )}
                       </div>
 
-                      <span className="text-xs font-bold">{step.label}</span>
+                      <span className="text-xs font-bold">
+                        {step.label}
+                      </span>
 
                       <span className="mt-1 text-[10px] text-slate-400">
                         {step.desc}
@@ -593,7 +603,7 @@ export default function OrderStatus() {
         </Card>
 
         {/* ================================= */}
-        {/* Order Details                       */}
+        {/* Order Details                      */}
         {/* ================================= */}
 
         <Card>
@@ -608,11 +618,7 @@ export default function OrderStatus() {
                 className="w-fit border-slate-700 bg-slate-950 text-slate-300"
               >
                 {currentOrder.orderType === "DINE_IN"
-                  ? `Dine In${
-                      currentOrder.tableNumber
-                        ? ` · Table ${currentOrder.tableNumber}`
-                        : ""
-                    }`
+                  ? "Dine In"
                   : "Takeaway"}
               </Badge>
             </div>
@@ -651,6 +657,7 @@ export default function OrderStatus() {
             <Separator className="bg-slate-800" />
 
             {/* Pricing */}
+
             <div className="space-y-2 text-xs text-slate-400">
               <div className="flex justify-between">
                 <span>Subtotal</span>
@@ -673,11 +680,14 @@ export default function OrderStatus() {
               <div className="flex justify-between text-base font-extrabold text-white">
                 <span>Total</span>
 
-                <span className="text-orange-400">LKR {total.toFixed(2)}</span>
+                <span className="text-orange-400">
+                  LKR {total.toFixed(2)}
+                </span>
               </div>
             </div>
 
             {/* Assistance */}
+
             <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
               <Button
                 variant="outline"
@@ -706,7 +716,9 @@ export default function OrderStatus() {
           <CardContent className="p-5">
             <div className="flex flex-col gap-3 text-xs sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <span className="text-slate-500">Order Reference</span>
+                <span className="text-slate-500">
+                  Order Reference
+                </span>
 
                 <p className="mt-1 font-semibold text-slate-200">
                   {currentOrder.orderReference}
@@ -714,18 +726,26 @@ export default function OrderStatus() {
               </div>
 
               <div>
-                <span className="text-slate-500">Placed At</span>
+                <span className="text-slate-500">
+                  Placed At
+                </span>
 
                 <p className="mt-1 font-semibold text-slate-200">
-                  {new Date(currentOrder.createdAt).toLocaleString()}
+                  {new Date(
+                    currentOrder.createdAt
+                  ).toLocaleString()}
                 </p>
               </div>
 
               <div>
-                <span className="text-slate-500">Current Status</span>
+                <span className="text-slate-500">
+                  Current Status
+                </span>
 
                 <Badge
-                  className={`mt-1 ${getStatusBadgeClass(currentOrder.status)}`}
+                  className={`mt-1 ${getStatusBadgeClass(
+                    currentOrder.status
+                  )}`}
                 >
                   {currentOrder.status}
                 </Badge>
@@ -737,3 +757,4 @@ export default function OrderStatus() {
     </div>
   );
 }
+

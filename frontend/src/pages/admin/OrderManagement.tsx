@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,14 +11,11 @@ import {
   User,
 } from "lucide-react";
 
-
 import type { OrderStatus } from "../../types/order";
-
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Card } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-
 import { toast } from "../../components/ui/toast";
 import { useOrderStore } from "@/stores/orderStore";
 
@@ -28,42 +27,32 @@ const columns: {
   {
     key: "PLACED",
     label: "Placed / New",
-    color:
-      "border-amber-500/40 bg-amber-500/5 text-amber-400",
+    color: "border-amber-500/40 bg-amber-500/5 text-amber-400",
   },
   {
     key: "CONFIRMED",
     label: "Confirmed",
-    color:
-      "border-cyan-500/40 bg-cyan-500/5 text-cyan-400",
+    color: "border-cyan-500/40 bg-cyan-500/5 text-cyan-400",
   },
   {
     key: "PREPARING",
     label: "In Preparation",
-    color:
-      "border-orange-500/40 bg-orange-500/5 text-orange-400",
+    color: "border-orange-500/40 bg-orange-500/5 text-orange-400",
   },
   {
     key: "READY",
     label: "Ready to Serve",
-    color:
-      "border-blue-500/40 bg-blue-500/5 text-blue-400",
+    color: "border-blue-500/40 bg-blue-500/5 text-blue-400",
   },
   {
     key: "COMPLETED",
     label: "Completed",
-    color:
-      "border-emerald-500/40 bg-emerald-500/5 text-emerald-400",
+    color: "border-emerald-500/40 bg-emerald-500/5 text-emerald-400",
   },
 ];
 
 export default function OrderManagement() {
-  const {
-    orders,
-    loading,
-    fetchOrders,
-    updateOrderStatus,
-  } = useOrderStore();
+  const { orders, loading, fetchOrders, updateOrderStatus } = useOrderStore();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -74,9 +63,7 @@ export default function OrderManagement() {
       toast.add({
         title: "Failed to load orders",
         description:
-          error instanceof Error
-            ? error.message
-            : "Unable to load orders.",
+          error instanceof Error ? error.message : "Unable to load orders.",
         type: "error",
       });
     });
@@ -86,18 +73,9 @@ export default function OrderManagement() {
     const query = searchQuery.toLowerCase();
 
     return (
-      order.orderReference
-        .toLowerCase()
-        .includes(query) ||
-      order.customerName
-        .toLowerCase()
-        .includes(query) ||
-      String(order.tableNumber ?? "")
-        .toLowerCase()
-        .includes(query) ||
-      order.phoneNumber
-        .toLowerCase()
-        .includes(query)
+      order.orderReference.toLowerCase().includes(query) ||
+      order.customerName.toLowerCase().includes(query) ||
+      order.phoneNumber.toLowerCase().includes(query)
     );
   });
 
@@ -159,10 +137,8 @@ export default function OrderManagement() {
             <Input
               type="text"
               value={searchQuery}
-              onChange={(event) =>
-                setSearchQuery(event.target.value)
-              }
-              placeholder="Search by ID, Table, Name..."
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search by ID, Name, Phone..."
               className="border-slate-800 bg-slate-950 pl-10 text-xs text-white placeholder:text-slate-500"
             />
           </div>
@@ -218,7 +194,7 @@ export default function OrderManagement() {
                             className="border-slate-800 bg-slate-900 text-[11px] text-slate-300"
                           >
                             {order.orderType === "DINE_IN"
-                              ? `Table ${order.tableNumber ?? "-"}`
+                              ? "Dine In"
                               : "Takeaway"}
                           </Badge>
                         </div>
@@ -244,8 +220,7 @@ export default function OrderManagement() {
                               className="flex justify-between gap-2"
                             >
                               <span className="max-w-[140px] truncate">
-                                {item.quantity}x{" "}
-                                {item.menuItemName}
+                                {item.quantity}x {item.menuItemName}
                               </span>
 
                               <span className="font-semibold text-slate-400">
@@ -329,4 +304,3 @@ export default function OrderManagement() {
     </div>
   );
 }
-

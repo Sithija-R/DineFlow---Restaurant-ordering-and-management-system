@@ -38,98 +38,74 @@ public class SecurityConfig {
 
                                 .authorizeHttpRequests(auth -> auth
 
-                                                // ==========================================
                                                 // CUSTOMER - PLACE ORDER
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.POST,
                                                                 "/api/orders")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // CUSTOMER - CHECK ORDER
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.GET,
                                                                 "/api/orders/*")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // ADMIN - VIEW ORDERS
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.GET,
                                                                 "/api/orders")
                                                 .hasRole("ADMIN")
 
-                                                // ==========================================
                                                 // ADMIN - UPDATE ORDER STATUS
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.PATCH,
                                                                 "/api/orders/*/status")
                                                 .hasRole("ADMIN")
 
-                                                // ==========================================
                                                 // CUSTOMER - VIEW RESTAURANT TABLES
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.GET,
                                                                 "/api/tables",
                                                                 "/api/tables/*")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // CUSTOMER - CREATE RESERVATION
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.POST,
                                                                 "/api/reservations")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // CUSTOMER - VIEW RESERVATION BY ID
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.GET,
                                                                 "/api/reservations/*")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // CUSTOMER - VIEW RESERVATION BY REFERENCE
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.GET,
                                                                 "/api/reservations/reference/*")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // Customer - VIEW RESERVATIONS
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.GET,
                                                                 "/api/reservations")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // ADMIN - UPDATE RESERVATION STATUS
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 HttpMethod.PATCH,
                                                                 "/api/reservations/*/status")
                                                 .hasRole("ADMIN")
 
-                                                // ==========================================
                                                 // SWAGGER
-                                                // ==========================================
                                                 .requestMatchers(
                                                                 "/swagger-ui/**",
                                                                 "/v3/api-docs/**")
                                                 .permitAll()
 
-                                                // ==========================================
                                                 // EVERYTHING ELSE
-                                                // ==========================================
                                                 .anyRequest().authenticated())
 
                                 .addFilterBefore(
@@ -139,16 +115,15 @@ public class SecurityConfig {
                 return http.build();
         }
 
-        // ==========================================
         // CORS
-        // ==========================================
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
 
                 CorsConfiguration configuration = new CorsConfiguration();
 
                 configuration.setAllowedOrigins(
-                                List.of("http://localhost:5173"));
+                                List.of("http://localhost:5173",
+                                                "http://localhost:5174"));
 
                 configuration.setAllowedMethods(
                                 List.of(
