@@ -5,7 +5,7 @@ DineFlow is a full-stack restaurant ordering and management system that allows c
 The project uses a microservices architecture with separate services for authentication, menu management, and order management.
 
 <p align="center">
-  <img src="frontend/public/preview.jpg" alt="DineFlow Preview" width="100%" />
+  <img src="frontend/public/preview_2.jpg" alt="DineFlow Preview" width="100%" />
 </p>
 
 ---
